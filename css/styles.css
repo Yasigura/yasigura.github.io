@@ -18,13 +18,15 @@
 
   body {
     margin: 0;
+    min-width: 320px;
+    min-height: 480px;
     background: var(--ink);
     color: var(--paper);
     font-family: var(--f-text);
     font-size: 15px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    overflow-x: auto;
   }
 
   #grain {
@@ -197,6 +199,28 @@
     transition: background .2s ease;
   }
   .sound[aria-pressed="true"] .sound-dot { background: var(--paper); }
+
+  /* мини-эквалайзер над кнопкой звука, оживает пока играет трек */
+  .eq {
+    position: fixed;
+    right: 26px;
+    bottom: 68px;
+    z-index: 70;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .eq.is-active { opacity: 1; }
+  .eq-bar {
+    flex: 1;
+    height: 15%;
+    background: var(--ash);
+    transition: height .12s ease;
+  }
 
   a:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
 

@@ -42,10 +42,50 @@
   var btn = document.getElementById('soundToggle');
   var label = btn.querySelector('.sound-label');
   var audio = document.getElementById('bgAudio');
+  var eq = document.getElementById('eq');
+  var bars = eq.querySelectorAll('.eq-bar');
+  var binIndexes = [];
+  var audioCtx, analyser, dataArray, source, rafId;
+
+  function syncEqWidth() {
+    eq.style.width = btn.offsetWidth + 'px';
+  }
+  syncEqWidth();
+  window.addEventListener('resize', syncEqWidth);
+
+  function setupAudioGraph() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    source = audioCtx.createMediaElementSource(audio);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 64;
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    for (var i = 0; i < bars.length; i++) {
+      binIndexes.push(1 + Math.floor(i * (analyser.frequencyBinCount - 2) / (bars.length - 1)));
+    }
+  }
+
+  function tick() {
+    analyser.getByteFrequencyData(dataArray);
+    for (var i = 0; i < bars.length; i++) {
+      var v = dataArray[binIndexes[i]] || 0;
+      bars[i].style.height = (15 + (v / 255) * 85).toFixed(0) + '%';
+    }
+    rafId = requestAnimationFrame(tick);
+  }
 
   btn.addEventListener('click', function () {
     if (audio.paused) {
-      audio.play();
+      // создаём/включаем аудио-контекст строго тут, внутри клика —
+      // иначе браузер может молча не дать звуку зазвучать
+      setupAudioGraph();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      audio.play().catch(function (err) {
+        console.error('Не удалось включить звук:', err);
+      });
     } else {
       audio.pause();
     }
@@ -54,11 +94,15 @@
   audio.addEventListener('play', function () {
     btn.setAttribute('aria-pressed', 'true');
     label.textContent = 'Стоп';
+    eq.classList.add('is-active');
+    tick();
   });
 
   audio.addEventListener('pause', function () {
     btn.setAttribute('aria-pressed', 'false');
     label.textContent = 'Звук';
+    eq.classList.remove('is-active');
+    cancelAnimationFrame(rafId);
   });
 
   audio.addEventListener('ended', function () {
