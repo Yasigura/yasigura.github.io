@@ -43,8 +43,9 @@
   var label = btn.querySelector('.sound-label');
   var audio = document.getElementById('bgAudio');
   var eq = document.getElementById('eq');
+  var credit = document.getElementById('credit');
   var bars = eq.querySelectorAll('.eq-bar');
-  var binIndexes = [];
+  var bandRanges = [];
   var audioCtx, analyser, dataArray, source, rafId;
 
   function syncEqWidth() {
@@ -58,20 +59,31 @@
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     source = audioCtx.createMediaElementSource(audio);
     analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 64;
+    analyser.fftSize = 128;
+    analyser.smoothingTimeConstant = 0.35; // меньше = резче реагирует
     dataArray = new Uint8Array(analyser.frequencyBinCount);
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
 
+    // делим спектр на полосы логарифмически (как в настоящих эквалайзерах) —
+    // иначе верхние частоты почти не попадают в бины и полоски стоят колом
+    var bins = analyser.frequencyBinCount;
     for (var i = 0; i < bars.length; i++) {
-      binIndexes.push(1 + Math.floor(i * (analyser.frequencyBinCount - 2) / (bars.length - 1)));
+      var start = Math.max(1, Math.floor(Math.pow(i / bars.length, 2) * bins));
+      var end = Math.max(start + 1, Math.floor(Math.pow((i + 1) / bars.length, 2) * bins));
+      bandRanges.push([start, Math.min(end, bins)]);
     }
   }
 
   function tick() {
     analyser.getByteFrequencyData(dataArray);
     for (var i = 0; i < bars.length; i++) {
-      var v = dataArray[binIndexes[i]] || 0;
+      var range = bandRanges[i];
+      var sum = 0;
+      for (var j = range[0]; j < range[1]; j++) sum += dataArray[j];
+      var avg = sum / (range[1] - range[0]);
+      var boost = 1 + i * 0.1; // компенсируем то, что у верхов энергии от природы меньше
+      var v = Math.min(255, avg * boost * 0.55); // общий запас, чтобы не утыкалось в потолок
       bars[i].style.height = (15 + (v / 255) * 85).toFixed(0) + '%';
     }
     rafId = requestAnimationFrame(tick);
@@ -95,6 +107,7 @@
     btn.setAttribute('aria-pressed', 'true');
     label.textContent = 'Стоп';
     eq.classList.add('is-active');
+    credit.classList.add('is-active');
     tick();
   });
 
@@ -102,6 +115,7 @@
     btn.setAttribute('aria-pressed', 'false');
     label.textContent = 'Звук';
     eq.classList.remove('is-active');
+    credit.classList.remove('is-active');
     cancelAnimationFrame(rafId);
   });
 
