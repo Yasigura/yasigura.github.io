@@ -175,6 +175,14 @@
     .hero { grid-template-columns: 1fr; align-content: center; }
     .hero-left { order: 2; padding-bottom: 40px; }
     .figure { order: 1; max-width: 290px; margin-bottom: -120px; }
+
+    /* повесь класс "hide-mobile" на любой элемент — на телефоне он пропадёт */
+    .hide-mobile { display: none !important; }
+  }
+
+  @media (min-width: 860px) {
+    /* обратный вариант: показывается только на телефоне/планшете */
+    .hide-desktop { display: none !important; }
   }
 
   .ph { border-bottom: 1px dotted #5A5A56; }
