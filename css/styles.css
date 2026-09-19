@@ -26,7 +26,7 @@
     font-size: 15px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   #grain {
@@ -96,15 +96,20 @@
 
   .bar {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 18px;
+    gap: 10px 18px;
     padding-block: 20px;
     border-bottom: 1px solid #1B1B1B;
   }
   .bar .lab { color: var(--ash); }
   .bar a { color: var(--ash); text-decoration: none; }
   .bar a:hover { color: var(--paper); }
-  .bar .right { display: flex; gap: 22px; }
+  .bar .right { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+
+  @media (max-width: 420px) {
+    .bar .lab { font-size: 11px; letter-spacing: .12em; }
+  }
 
   .hero {
     display: grid;
