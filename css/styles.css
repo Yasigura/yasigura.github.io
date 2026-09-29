@@ -15,6 +15,12 @@
   img { max-width: 100%; }
   [hidden] { display: none !important; }
   html, body { height: 100%; }
+  @supports (height: 100svh) {
+    /* на мобильных svh считается по реально видимой области экрана,
+       а не по высоте без адресной строки — иначе страница становится
+       выше вьюпорта и появляется лишний пустой скролл */
+    html, body { height: 100svh; }
+  }
 
   body {
     margin: 0;
