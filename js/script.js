@@ -20,6 +20,7 @@
 // === пыль по всей сцене ===
 (function () {
   var container = document.getElementById('dust');
+  if (!container) return;
   var rand = function (min, max) { return min + Math.random() * (max - min); };
 
   for (var i = 0; i < 42; i++) {
@@ -40,6 +41,7 @@
 // === переключатель звука ===
 (function () {
   var btn = document.getElementById('soundToggle');
+  if (!btn) return;
   var label = btn.querySelector('.sound-label');
   var audio = document.getElementById('bgAudio');
   var eq = document.getElementById('eq');
