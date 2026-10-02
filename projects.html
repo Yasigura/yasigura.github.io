@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>hope</title>
+<link rel="icon" href="assets/icon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@800;900&family=Roboto+Condensed:wght@400;700&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/projects.css">
+</head>
+<body>
+<div id="grain" aria-hidden="true"></div>
+
+<div class="projects-page">
+  <header>
+    <div class="shell">
+      <div class="bar">
+        <span class="lab">[ Личный сайт ]</span>
+        <span class="right">
+          <a class="lab" href="index.html">Главная</a>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="projects">
+    <figure class="projects-visual">
+      <img src="assets/playerangel.png" alt="Ангел">
+    </figure>
+
+    <div class="projects-list shell">
+      <h1 class="projects-title ph">Проекты</h1>
+
+      <article class="project-card">
+        <h2 class="project-title">OPHANIM</h2>
+        <div class="player">
+          <button class="player-toggle" type="button" aria-pressed="false" aria-label="Воспроизвести трек «Офаним»"></button>
+          <div class="player-track">
+            <div class="player-bar">
+              <div class="player-progress"></div>
+            </div>
+            <div class="player-time lab">
+              <span class="player-current">0:00</span>
+              <span class="player-duration">0:00</span>
+            </div>
+          </div>
+          <audio class="player-audio" preload="metadata" src="assets/ophanim.mp3"></audio>
+        </div>
+      </article>
+    </div>
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/projects.js"></script>
+</body>
+</html>
