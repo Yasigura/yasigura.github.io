@@ -1,4 +1,3 @@
-// === глаз из пылинок на странице «Обо мне» ===
 (function () {
   var canvas = document.getElementById('form');
   if (!canvas) return;
@@ -6,11 +5,10 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var rnd = Math.random;
 
-  var IRIS = 0.5;                       // угловой радиус радужки на глазном яблоке
+  var IRIS = 0.5;
   var PUPIL_DARK = 0.22, PUPIL_LIT = 0.1;
-  var CAM = 4;                          // расстояние камеры — сила перспективы
+  var CAM = 4;
 
-  // склера: пыль по глазному яблоку, кроме места под радужкой
   var sclera = [];
   var golden = Math.PI * (3 - Math.sqrt(5));
   var NS = 2400;
@@ -23,8 +21,6 @@
     sclera.push([x, y, z]);
   }
 
-  // радужка: радиальные волокна от края зрачка к краю радужки
-  // [азимут, u (0 — край зрачка, 1 — край радужки), случайная фаза, тип]
   var iris = [];
   var FIBERS = 110;
   for (var f = 0; f < FIBERS; f++) {
@@ -34,8 +30,8 @@
       iris.push([phi + (rnd() - 0.5) * 0.06, Math.min(1, (s + rnd() * 0.6) / steps), rnd() * 6.28, 0]);
     }
   }
-  for (var p = 0; p < 70; p++) iris.push([p / 70 * 6.2832, 0, rnd() * 6.28, 1]);   // край зрачка
-  for (var q = 0; q < 90; q++) iris.push([q / 90 * 6.2832, 1, rnd() * 6.28, 2]);   // край радужки
+  for (var p = 0; p < 70; p++) iris.push([p / 70 * 6.2832, 0, rnd() * 6.28, 1]);
+  for (var q = 0; q < 90; q++) iris.push([q / 90 * 6.2832, 1, rnd() * 6.28, 2]);
 
   var w = 0, h = 0;
   function resize() {
@@ -49,7 +45,6 @@
 
   function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
 
-  // взгляд: следит за курсором по всей странице
   var lookX = 0, lookY = 0, curX = 0, curY = 0;
   var lastMove = -1e9, nextSaccade = 0;
   window.addEventListener('pointermove', function (e) {
@@ -62,9 +57,6 @@
     if (reduceMotion) draw(0);
   });
 
-  // свет: чем ближе курсор к глазу, тем сильнее сужается зрачок и щурится глаз.
-  // Реакция начинается примерно за два радиуса глаза от центра
-  // само свечение — отдельный слой, который едет за курсором по всей странице
   var lamp = document.getElementById('cursorLight');
   var light = 0, lightTarget = 0;
   var px0 = -9999, py0 = -9999, spx = -9999, spy = -9999;
@@ -92,7 +84,6 @@
   });
   document.addEventListener('mouseleave', release);
 
-  // разрез век: миндалина в координатах экрана, нормированных на радиус глаза
   var LID_A = 1.05, LID_TOP = 0.58, LID_BOT = 0.5;
   function lidTop(px, open) {
     var k = 1 - (px / LID_A) * (px / LID_A);
@@ -116,7 +107,6 @@
       lamp.style.opacity = light;
     }
 
-    // если курсор давно не двигался — глаз сам осматривается короткими рывками
     if (!reduceMotion && t - lastMove > 3000 && t > nextSaccade) {
       lookX = (rnd() - 0.5) * 0.6;
       lookY = (rnd() - 0.5) * 0.25;
@@ -155,7 +145,6 @@
       var px = x2 * persp, py = y1 * persp;
       var top = lidTop(px, open), bot = lidBot(px, open);
       if (py <= top || py >= bot) return;
-      // у кромки век пыль гаснет — получается мягкая тень от века
       var edge = Math.min(py - top, bot - py) / 0.12;
       var near = (1 - z2) / 2;
       ctx.globalAlpha = Math.min(1, alpha * near * Math.min(1, edge));
@@ -183,7 +172,6 @@
       plot(sa * Math.cos(ip[0]), sa * Math.sin(ip[0]), -Math.cos(ang), alpha, size);
     }
 
-    // веки: кромки из более плотной пыли
     for (var k = 0; k <= 140; k++) {
       var lxp = -LID_A + (k / 140) * LID_A * 2;
       var jt = Math.sin(k * 12.9898) * 0.006;
@@ -217,7 +205,6 @@
     return;
   }
 
-  // не крутим анимацию, пока глаз за пределами экрана
   new IntersectionObserver(function (entries) {
     visible = entries[0].isIntersecting;
     if (visible && !rafId) rafId = requestAnimationFrame(frame);

@@ -1,4 +1,3 @@
-// === зерно поверх страницы ===
 (function () {
   var n = document.createElement('canvas');
   n.width = n.height = 180;
@@ -17,7 +16,6 @@
   document.getElementById('grain').style.backgroundImage = 'url(' + n.toDataURL() + ')';
 })();
 
-// === пыль по всей сцене ===
 (function () {
   var container = document.getElementById('dust');
   if (!container) return;
